@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewVideo Player</title>
+    <meta name="description" content="NewVideo Player">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="NewVideo Player">
+    <meta name="theme-color" content="#fafafa">
+    <meta name="author" content="Piotr Badełek">
+</head>
+
+<body>
+    <!--[if IE]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    <h1>Slideshow</h1>
+    <img src="./FFFFFF-0.png" title="NewVideo Player" data-newvideo="flash.nv" data-newvideoinfo="flash.nvi"
+        data-actionscript="flash.as" alt="NewVideo Player" loading="lazy" decoding="async">
+    <i>NewVideo Player</i>
+
+    <script>
+        "use strict";
+
+        let el = document.querySelector("[data-newvideo]");
+        fetch(el.getAttribute("data-newvideo")).then(resp => resp.text())
+            .then(data => downloadInfo(data));
+
+        function downloadInfo(partone) {
+            fetch(el.getAttribute("data-newvideoinfo")).then(resp => resp.text())
+                .then(data => downloadActions(partone, data));
+        };
+
+        function downloadActions(partone, parttwo) {
+            fetch(el.getAttribute("data-actionscript")).then(resp => resp.text())
+                .then(data => playvid(partone, parttwo, data));
+        };
+
+        let frame = 0;
+
+        function playvid(deeta, info, actions) {
+            let processed = deeta.split("kukanqtokasztan");
+            let code = JSON.parse(actions);
+            console.log(code);
+            let showcase = setInterval(() => {
+                if (frame >= 3) {
+                    frame = 0;
+                };
+                el.style.backgroundImage = `url(${processed[frame].replace("\n", "").replace("kukanqtokasztan", "")})`;
+                frame++;
+                if (code[frame - 1]) {
+                    /*!
+                    * Immediately Invoked Function Expression Boilerplate
+                    * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
+                    */
+                    eval(`;(function () {
+
+                    'use strict';
+
+                    function stop() {
+                        clearInterval(showcase);
+                    };
+
+                    function gotoAndPlay(point) {
+                        frame = point;
+                    }
+
+                    ${code[frame - 1]}
+
+                    })();`);
+                }
+            }, parseInt(info));
+            el.style.backgroundSize = "contain";
+            el.style.backgroundRepeat = "no-repeat";
+            el.style.width = "550px";
+            el.style.height = "400px";
+        };
+    </script>
+</body>
+
+</html>
